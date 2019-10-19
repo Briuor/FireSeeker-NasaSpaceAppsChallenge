@@ -79,7 +79,7 @@ router.post('/addcoordinates', (req, res) => { //Populate database with Fire Spo
         city = spot.city
         st = spot.state
         conf = spot.confidence
-        const sqlQry = `INSERT INTO fire_spots (latitude,longitude,address,city,state,confidence) VALUES ('${lat}','${lon}','${add}','${city}','${st}','${conf}')`
+        const sqlQry = `INSERT INTO fire_spots (latitude,longitude,address,city,state,confidence) VALUES ("${lat}","${lon}","${add}","${city}","${st}","${conf}")`
         connection.query(sqlQry, function(error, results, fields) {
             if(error) //Query error
                 //res.json({"valid":false,"error":error})
