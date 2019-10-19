@@ -5,7 +5,7 @@ import csv
 spots = []
 maps_api_key = 'AIzaSyBpvYF2XxF3UcBxSdgGrTqcy8TnoctbSS0'
 
-with open('temp.csv') as csvfile:
+with open('MODIS_C6_South_America_24h.csv') as csvfile:
     readCSV = csv.reader(csvfile, delimiter=',')
     line_counter = 0
     for row in readCSV:
@@ -29,5 +29,5 @@ with open('temp.csv') as csvfile:
         line_counter += 1
         print('Getting info of row #{}'.format(line_counter))
 
-print({'spots':spots})
+#print({'spots':spots})
 res = requests.post('http://localhost:4000/addcoordinates', json={'spots':spots})
