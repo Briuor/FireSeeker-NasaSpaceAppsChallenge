@@ -1,7 +1,6 @@
 const express = require('express')
 const mysql = require('mysql')
 const md5 = require('md5')
-const spawn = require('child_process').spawn
 
 const app = express();         
 const port = 4000;
@@ -17,7 +16,7 @@ function execSQLQuery(sqlQry, res) {
         port: 3306,
         user: 'root',
         password: '',
-        database: 'rastreador'
+        database: 'fireseeker'
     });
    
     connection.query(sqlQry, function(error, results, fields){
@@ -30,23 +29,33 @@ function execSQLQuery(sqlQry, res) {
 }
 
 //Definindo as rotas
-router.get('/', (req, res) => res.json({ message: 'Funcionando!' })); //Indica de a API está online
+router.get('/', (req, res) => res.json({ message: 'API Online' })); //Indicate API status
 
-router.get('/users', (req, res) => { //Consulta todos os usuários
+router.get('/users', (req, res) => { //All users query
     execSQLQuery('SELECT * FROM users', res);
 })
 
-router.get('/coordenadas', (req, res) => { //Consulta todas coordenadas
+router.get('/fire_spots', (req, res) => { //All fire spots query
     execSQLQuery('SELECT * FROM coordenadas', res);
 })
 
-router.get('/users/:login?', (req, res) => { //Consulta Usuário por login
+router.get('/users/:login?', (req, res) => { //Get user info by login
     let filter = ''
     if(req.params.login) filter = `WHERE login = '${req.params.login}'`
     execSQLQuery('SELECT * FROM users ' + filter, res);
 })
 
-router.post('/adduser', (req, res) => { //Adiciona um novo usuário
+router.get('/firespots/:state?', (req, res) => { //Get firespots by state
+    let filter = ''
+    if(req.params.state) filter = `WHERE state = '${req.params.state}'`
+    execSQLQuery('SELECT * FROM fire_spots ' + filter, res);
+})
+
+router.get('/firespots/', (req, res) => { //Get firespots by state
+    execSQLQuery('SELECT * FROM fire_spots');
+})
+
+router.post('/adduser', (req, res) => { //Add a new user
     const name = req.body.name
     const login = req.body.login
     const email = req.body.email
@@ -55,10 +64,33 @@ router.post('/adduser', (req, res) => { //Adiciona um novo usuário
 });
 
 router.post('/addcoordinates', (req, res) => { //Populate database with Fire Spots
-    
+    const connection = mysql.createConnection({
+        host: 'localhost',
+        port: 3306,
+        user: 'root',
+        password: '',
+        database: 'fireseeker'
+    });
+    let spots = req.body.spots
+    spots.forEach(function (spot) {
+        lat = spot.latitude
+        lon = spot.longitude
+        add = spot.address
+        city = spot.city
+        st = spot.state
+        conf = spot.confidence
+        const sqlQry = `INSERT INTO fire_spots (latitude,longitude,address,city,state,confidence) VALUES ('${lat}','${lon}','${add}','${city}','${st}','${conf}')`
+        connection.query(sqlQry, function(error, results, fields) {
+            if(error) //Query error
+                //res.json({"valid":false,"error":error})
+                console.log(error)
+        });
+    });
+    res.json({"valid":true})
+    connection.end();
 });
 
-router.post('/autenticate', (req,res) => { //Autentica um usuário
+router.post('/autenticate', (req,res) => { //Autenticates an user
     const login = req.body.login
     const password = req.body.password
     let password_hash = md5(password)
@@ -76,13 +108,13 @@ router.post('/autenticate', (req,res) => { //Autentica um usuário
         if(error) //Erro na consulta
             res.json({"valid":false,"error":error})
         else {
-          if (results[0] == undefined || results[0] === undefined) { //Usuário não existe
+          if (results[0] == undefined || results[0] === undefined) { //User don't exist
             res.json({"valid":false,"error":"Usuário não existe"})
           }
-          else { //Usuário existe
-            if (results[0].password === password_hash) { //Senha certa
+          else { //User exists
+            if (results[0].password === password_hash) { //Right password
               res.json({"valid":true,"name":results[0].name})
-            } else { //Senha errada
+            } else { //Wrong password
                 res.json({"valid":false,"error":"Senha incorreta"})
             }
           } 
@@ -90,90 +122,5 @@ router.post('/autenticate', (req,res) => { //Autentica um usuário
         connection.end();
     });
 });
-
-router.get('/coordenadas/:dia?/:mes?/:ano?/:login?', (req, res) => { //Consulta as coordenadas do dia
-    if(req.params.ano && req.params.ano && req.params.dia && req.params.login) {
-        let filter = req.params.ano + '-' + req.params.mes + '-' + req.params.dia + `%' and login = '${req.params.login}';`
-        execSQLQuery(`SELECT * FROM coordenadas WHERE hour LIKE '${filter}`, res);
-    } else {
-        res.json({"erro":"Requisição Inválida"})
-    }
-})
-
-router.post('/addrectoken', (req, res) => { //Salva o token gerado no banco de dados
-    const login = req.body.login
-    const token = req.body.token
-    execSQLQuery(`UPDATE users SET recToken = '${token}' where login = '${login}'`, res)
-});
-
-router.post('/solicitarectoken', (req, res) => { //Solicita um token para recuperação de senha
-    const login = req.body.login
-    const sqlQry = `SELECT email from users where login = '${login}'`
-
-    const connection = mysql.createConnection({
-        host: 'localhost',
-        port: 3306,
-        user: 'root',
-        password: '',
-        database: 'rastreador'
-    });
-   
-    connection.query(sqlQry, function(error, results, fields) {
-        if(error) //Erro na consulta
-            res.json({"valid":false,"error":error})
-        else {
-          if (results[0] == undefined || results[0] === undefined) { //Usuário não existe
-            res.json({"valid":false,"error":"Usuário não existe"})
-          }
-          else { //Usuário existe - Python manda o email
-            let email = results[0].email
-            const pythonProcess = spawn('python',["send_mail.py", login, email]);
-            pythonProcess.stdout.on('data', function(data) {
-                let msg = data.toString()
-                console.log(msg)
-                if (msg == 'Email enviado') { //Email enviado
-                    res.json({"valid":true,"mail":email})
-                } else { //Email não enviado
-                    res.json({"valid":false,"error":"Falha ao enviar o email de recuperação"})
-                }
-            });
-          } 
-        }
-        connection.end();
-    });
-});
-
-router.post('/validarectoken', (req, res) => { //Valida um token para recuperação de senha
-    const login = req.body.login
-    const token = req.body.token
-    const sqlQry = `SELECT recToken from users where login = '${login}'`
-
-    const connection = mysql.createConnection({
-        host: 'localhost',
-        port: 3306,
-        user: 'root',
-        password: '',
-        database: 'rastreador'
-    });
-   
-    connection.query(sqlQry, function(error, results, fields) {
-        if(error) //Erro na consulta
-            res.json({"valid":false,"error":error})
-        else {
-            if (results[0].recToken == token) { //Token válido
-                res.json({"valid":true})
-            } else { //Token inválido
-                res.json({"valid":false,"error":"Token inválido"})
-            }
-        }
-        connection.end();
-    });
-});
-
-router.post('/trocarsenha', (req, res) => { //Troca a senha de um usuário
-    const login = req.body.login
-    const password = md5(req.body.password)
-    execSQLQuery(`UPDATE users SET password = '${password}' where login = '${login}'`, res)
-});
-       
+     
 app.listen(port)
