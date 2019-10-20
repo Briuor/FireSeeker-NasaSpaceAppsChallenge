@@ -83,10 +83,11 @@ router.get('/userrequests/:id?', (req, res) => { //Get requests info by user id
     execSQLQuery(`SELECT r.description, r.id, s.status FROM requests r, user_requests s WHERE s.user_id = '${id}' AND s.request_id = r.id`, res);
 })
 
-router.post('/updatestatus', (req, res) => { //Update the status of a request
-    const user = req.body.user_id
-    const request = req.body.request_id
-    execSQLQuery(`UPDATE user_requests SET status = 1 WHERE user_id = '${user}' and request_id = '${request}'`, res);
+router.get('/updatestatus/:id_user?/:id_request/:new_status?', (req, res) => { //Update the status of a request
+    const user = req.params.id_user
+    const request = req.params.id_request
+    const new_st = req.params.new_status
+    execSQLQuery(`UPDATE user_requests SET status = ${new_st} WHERE user_id = ${user} AND request_id = ${request}`, res);
 })
 
 router.post('/addrequest', (req, res) => { //Add a new request
