@@ -1,34 +1,32 @@
-const express = require('express')
-const mysql = require('mysql')
-const md5 = require('md5')
-const cors = require('cors')
-const spawn = require('child_process').spawn
+const express = require("express");
+const mysql = require("mysql");
+const md5 = require("md5");
+const cors = require("cors");
+const spawn = require("child_process").spawn;
 
-const app = express();         
+const app = express();
 const port = 4000;
 
 const router = express.Router();
-app.use(express.json())
-app.use(cors())
-app.use('/', router);
+app.use(express.json());
+app.use(cors());
+app.use("/", router);
 
 //Database Operations:
 function execSQLQuery(sqlQry, res) {
-    const connection = mysql.createConnection({
-        host: 'localhost',
-        port: 3306,
-        user: 'root',
-        password: '',
-        database: 'fireseeker'
-    });
-   
-    connection.query(sqlQry, function(error, results, fields){
-        if(error) 
-          res.json(error);
-        else
-          res.json(results);
-        connection.end();
-    });
+  const connection = mysql.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "g9cr5kuj",
+    database: "fireseeker"
+  });
+
+  connection.query(sqlQry, function(error, results, fields) {
+    if (error) res.json(error);
+    else res.json(results);
+    connection.end();
+  });
 }
 
 //Definindo as rotas
@@ -109,31 +107,33 @@ router.post('/addrequest', (req, res) => { //Add a new request
     });
 });
 
-router.post('/addcoordinates', (req, res) => { //Populate database with Fire Spots
-    const connection = mysql.createConnection({
-        host: 'localhost',
-        port: 3306,
-        user: 'root',
-        password: '',
-        database: 'fireseeker'
+router.post("/addcoordinates", (req, res) => {
+  //Populate database with Fire Spots
+  const connection = mysql.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "g9cr5kuj",
+    database: "fireseeker"
+  });
+  let spots = req.body.spots;
+  spots.forEach(function(spot) {
+    lat = spot.latitude;
+    lon = spot.longitude;
+    add = spot.address;
+    city = spot.city;
+    st = spot.state;
+    conf = spot.confidence;
+    const sqlQry = `INSERT INTO fire_spots (latitude,longitude,address,city,state,confidence) VALUES ("${lat}","${lon}","${add}","${city}","${st}","${conf}")`;
+    connection.query(sqlQry, function(error, results, fields) {
+      if (error)
+        //Query error
+        //res.json({"valid":false,"error":error})
+        console.log(error);
     });
-    let spots = req.body.spots
-    spots.forEach(function (spot) {
-        lat = spot.latitude
-        lon = spot.longitude
-        add = spot.address
-        city = spot.city
-        st = spot.state
-        conf = spot.confidence
-        const sqlQry = `INSERT INTO fire_spots (latitude,longitude,address,city,state,confidence) VALUES ("${lat}","${lon}","${add}","${city}","${st}","${conf}")`
-        connection.query(sqlQry, function(error, results, fields) {
-            if(error) //Query error
-                //res.json({"valid":false,"error":error})
-                console.log(error)
-        });
-    });
-    res.json({"valid":true})
-    connection.end();
+  });
+  res.json({ valid: true });
+  connection.end();
 });
 
 router.post('/adduser', async (req, res) => { //Add a new user
@@ -177,8 +177,10 @@ router.post('/autenticate', (req,res) => { //Autenticates an user
             }
           } 
         }
-        connection.end();
-    });
+      }
+    }
+    connection.end();
+  });
 });
-     
-app.listen(port)
+
+app.listen(port);

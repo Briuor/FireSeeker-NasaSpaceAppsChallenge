@@ -9,17 +9,33 @@ export const Types = {
   REGISTER_SUCCESS: "user/REGISTER_SUCCESS",
   REGISTER_FAILED: "user/REGISTER_FAILED",
   LOGOUT: "user/LOGOUT",
-  UPDATE_USER: "user/UPDATE_USER"
+  UPDATE_USER: "user/UPDATE_USER",
+  ADDREQUEST_SUCCESS: "user/ADDREQUEST_SUCCESS",
+  GET_REQUESTS_SUCCESS: "user/GET_REQUESTS_SUCCESS",
+  CHANGE_REQUEST_STATUS_SUCCESS: "user/CHANGE_REQUEST_STATUS_SUCCESS",
+  UPDATE_USER_ENTITY_SUCCESS: "user/UPDATE_USER_ENTITY_SUCCESS"
 };
 
 // Reducer
 const initialState = {
+  id: localStorage.getItem("id"),
   name: "",
-  login: localStorage.getItem("login"),
+  email: "",
   password: "",
-  confirmPassword: "",
+  is_entity: 0,
+  state: "",
+  organization: "",
+  company_code: "",
+  atuation: "",
+  alertMessage: "",
   loading: false,
-  alertMessage: ""
+  request: {
+    description: "",
+    nro_needed: 0,
+    atuation: "",
+    state: ""
+  },
+  receivedRequests: []
 };
 
 export function userReducer(state = initialState, action) {
@@ -33,7 +49,9 @@ export function userReducer(state = initialState, action) {
       return {
         ...state,
         loading: false,
-        login: action.payload.login
+        id: action.payload.id,
+        state: action.payload.state,
+        is_entity: action.payload.is_entity
       };
     case Types.LOGIN_FAILED:
       return {
@@ -48,35 +66,101 @@ export function userReducer(state = initialState, action) {
       };
     case Types.REGISTER_SUCCESS:
       return {
+        id: "",
         name: "",
-        login: "",
+        email: "",
         password: "",
-        confirmPassword: "",
+        is_entity: 0,
+        state: "",
+        organization: "",
+        company_code: "",
+        atuation: "",
+        alertMessage: action.payload.alertMessage,
         loading: false,
-        alertMessage: action.payload.alertMessage
+        request: {
+          description: "",
+          nro_needed: 0,
+          atuation: "",
+          state: ""
+        }
       };
     case Types.REGISTER_FAILED:
       return {
+        id: "",
         name: "",
-        login: "",
+        email: "",
         password: "",
-        confirmPassword: "",
+        is_entity: 0,
+        state: "",
+        organization: "",
+        company_code: "",
+        atuation: "",
+        alertMessage: "",
         loading: false,
-        alertMessage: action.payload.alertMessage
+        request: {
+          description: "",
+          nro_needed: 0,
+          atuation: "",
+          state: ""
+        }
       };
     case Types.LOGOUT:
       return {
+        id: "",
         name: "",
-        login: "",
+        email: "",
         password: "",
-        confirmPassword: "",
+        is_entity: 0,
+        state: "",
+        organization: "",
+        company_code: "",
+        atuation: "",
+        alertMessage: "",
         loading: false,
-        alertMessage: ""
+        request: [
+          {
+            description: "",
+            nro_needed: 0,
+            atuation: "",
+            state: ""
+          }
+        ]
       };
     case Types.UPDATE_USER:
       return {
         ...action.user
       };
+
+    case Types.ADDREQUEST_SUCCESS:
+      return {
+        // ...action.users
+        ...state,
+        request: [
+          {
+            ...state.request,
+            nro_needed: 0,
+            atuation: "",
+            state: ""
+          }
+        ]
+      };
+    case Types.UPDATE_USER_ENTITY_SUCCESS:
+      return {
+        ...state,
+        is_entity: action.is_entity
+      };
+    case Types.GET_REQUESTS_SUCCESS:
+      return {
+        ...state,
+        receivedRequests: action.payload.userRequests
+      };
+
+    case Types.CHANGE_REQUEST_STATUS_SUCCESS:
+      return {
+        ...state,
+        receivedRequests: action.payload.userRequests
+      };
+
     default:
       return state;
   }
@@ -88,18 +172,25 @@ export function login(user, history, setShowAlertMessage) {
     console.log("loginstarted");
     dispatch(loginStarted());
     axios
-      .post("http://localhost:4000/autenticate", {
-        login: user.login,
+      .post("http://200.235.82.14:4000/autenticate", {
+        email: user.email,
         password: user.password
       })
       .then(res => {
-        dispatch(loginSuccess(user.login));
+        const id = res.data.id;
+        const state = res.data.state;
+        const is_entity = res.data.is_entity;
+        dispatch(loginSuccess(id, state, is_entity));
         console.log("Valid: " + res.data.valid);
         if (res.data.valid === true) {
           console.log("Login valido");
           localStorage.setItem("loginValid", "true");
-          localStorage.setItem("login", user.login);
-          history.push("/dashboard");
+          localStorage.setItem("id", id);
+          if (is_entity) {
+            history.push("/dashboard");
+          } else {
+            history.push("/volunteer");
+          }
         } else {
           console.log("Login invalido");
           dispatch(loginFailed("Login inválido"));
@@ -122,10 +213,12 @@ const loginStarted = () => ({
   type: Types.LOGIN_STARTED
 });
 
-const loginSuccess = login => ({
+const loginSuccess = (id, state, is_entity) => ({
   type: Types.LOGIN_SUCCESS,
   payload: {
-    login
+    id,
+    state,
+    is_entity
   }
 });
 
@@ -141,10 +234,16 @@ export function register(user, setShowAlertMessage, handleChangeForm) {
     console.log("registro started");
     dispatch(registerStarted());
     axios
-      .post("http://localhost:4000/addUser", {
+      .post("http://200.235.82.14:4000/adduser", {
         name: user.name,
+        email: user.email,
         login: user.login,
-        password: user.password
+        password: user.password,
+        organization: user.organization,
+        is_entity: user.is_entity,
+        state: user.state,
+        company_code: user.company_code,
+        atuation: user.atuation
       })
       .then(res => {
         dispatch(registerSuccess("Registrado com Sucesso!"));
@@ -199,3 +298,86 @@ export function updateUser(user) {
     user
   };
 }
+
+export function addRequest(user) {
+  return function(dispatch) {
+    console.log("addrequest started");
+    axios
+      .post("http://200.235.82.14:4000/addrequest", {
+        description: user.request.description,
+        atuation: user.request.atuation,
+        nro_needed: user.request.nro_needed,
+        state: user.state
+      })
+      .then(res => {
+        console.log("addrequest success");
+        dispatch(addRequestSuccess());
+      })
+      .catch(error => {
+        console.log("addrequest error");
+      });
+  };
+}
+
+const addRequestSuccess = () => {
+  return {
+    type: Types.ADDREQUEST_SUCCESS
+  };
+};
+
+export function getRequests(id) {
+  return function(dispatch) {
+    console.log("getRequest started");
+    axios
+      .get("http://200.235.82.14:4000/userrequests/" + id)
+      .then(res => {
+        const userRequests = res.data;
+        console.log("getRequest success: ");
+        console.log(userRequests);
+        dispatch(getRequestSuccess(userRequests));
+      })
+      .catch(error => {
+        console.log("getRequest error: " + error);
+      });
+  };
+}
+
+const getRequestSuccess = userRequests => {
+  return {
+    type: Types.GET_REQUESTS_SUCCESS,
+    payload: {
+      userRequests
+    }
+  };
+};
+
+export function updateUserEntity(is_entity) {
+  return {
+    type: Types.UPDATE_USER_ENTITY_SUCCESS,
+    is_entity
+  };
+}
+
+export function changeRequestStatus(userId, requestId, status) {
+  return function(dispatch) {
+    console.log("changeRequestStatus started" + userId + requestId + status);
+    axios
+      .get(
+        "http://200.235.82.14:4000/updatestatus/" +
+          Number.parseInt(userId) +
+          "/" +
+          Number.parseInt(requestId) +
+          "/" +
+          Number.parseInt(status)
+      )
+      .then(res => {
+        console.log("changeRequestStatus success: ");
+        // dispatch(changeRequestStatusSuccess());
+      })
+      .catch(error => {
+        console.log("changeRequestStatus error: " + error);
+      });
+  };
+}
+
+const changeRequestStatusSuccess = () => {};

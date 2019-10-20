@@ -13,10 +13,10 @@ export default function LoginForm({
 
   return (
     <Grid item xs={12}>
-      <Grid item xs={12}>
+      <Grid item xs={5}>
         <TextField
-          id="login"
-          label="Usuário"
+          id="email"
+          label="Email"
           className={classes.textField}
           onChange={handleChangeUser}
           margin="normal"
@@ -25,7 +25,7 @@ export default function LoginForm({
       <Grid item xs={12}>
         <TextField
           id="password"
-          label="Senha"
+          label="Password"
           type="password"
           className={classes.textField}
           onChange={handleChangeUser}
@@ -37,10 +37,10 @@ export default function LoginForm({
           variant="contained"
           color="primary"
           className={classes.button}
-          style={{ backgroundColor: "#59a8b5" }}
+          style={{ backgroundColor: "#D83556" }}
           onClick={submitLogin}
         >
-          Entrar
+          Login
         </Button>
       </Grid>
       <Grid item xs={12} style={{ marginTop: 18 }}>
@@ -50,7 +50,7 @@ export default function LoginForm({
           className={classes.button}
           onClick={handleChangeForm}
         >
-          Registrar-se
+          Register
         </Button>
       </Grid>
     </Grid>
