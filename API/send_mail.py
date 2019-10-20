@@ -3,9 +3,9 @@ import smtplib
 import json
 import sys
 
-EMAIL_DEST = 'erick.teixeira_50@hotmail.com'
-EMAIL_ADDRESS = 'projetorastreadorcom241@gmail.com'
-PASSWORD = 'rastreador-admin'
+EMAIL_DEST = credencials.EMAIL_DEST()
+EMAIL_ADDRESS = credencials.EMAIL_ADDRESS()
+PASSWORD = credencials.PASSWORD()
 subject = 'You have been Invited'
 msg = 'Some people need your help! Please login in your FireSeeker account.'
 
