@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Menu from "./components/DashBoard/Menu";
 import { Provider } from "react-redux";
 import Volunteer from "./components/Volunteer";
+import VolunteerTest from "./components/VolunteerTest";
 import store from "./store";
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -39,6 +40,7 @@ function App() {
           <Route exact path="/dashboard" component={DashBoard} />
           <Route exact path="/menu" component={Menu} />
           <Route exact path="/volunteer" component={Volunteer} />
+          <Route exact path="/test" component={VolunteerTest} />
         </Switch>
       </BrowserRouter>
     </Provider>
