@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ReactMapGL, { Marker } from "react-map-gl";
+import ReactMapGL, { Marker, GeolocateControl } from "react-map-gl";
 import Menu from "./Menu";
-import PolylineOverlay from "./PolylineOverlay";
+import ButtonBase from "@material-ui/core/ButtonBase";
+
+// import PolylineOverlay from "./PolylineOverlay";
 import { logout } from "../../store/ducks/user";
 import {
   getLastCoordinate,
@@ -16,42 +18,32 @@ export default function DashBoard(props) {
   const [viewport, setViewPort] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
-    latitude: 0,
-    longitude: 0,
-    zoom: 16
+    latitude: -22.405683,
+    longitude: -45.4404,
+    zoom: 15
   });
   let intervalRef = useRef([]);
 
   useEffect(() => {
-    dispatch(getLastCoordinate(user.login, setViewPort));
-    // interval to get the last coordinate by each 2 seconds
-    let id = setInterval(() => {
-      dispatch(getLastCoordinate(user.login));
-    }, 2000);
-    intervalRef.current.push(id);
-    // this return is the same as componentWillUnmount
-    // when unmount component clear the interval that get last coordinate
-    return () => {
-      for (let i = 0; i < intervalRef.current.length; i++)
-        clearInterval(intervalRef.current[i]);
-    };
+    dispatch(getCoordinates());
+    return () => {};
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logout(props.history));
-  };
+  // const handleLogout = () => {
+  //   dispatch(logout(props.history));
+  // };
 
-  const handleCancel = () => {
-    for (let i = 0; i < intervalRef.current.length; i++)
-      clearInterval(intervalRef.current[i]);
-  };
-  const handleInit = () => {
-    dispatch(getLastCoordinate(user.login));
-    let id = setInterval(() => {
-      dispatch(getLastCoordinate(user.login));
-    }, 2000);
-    intervalRef.current.push(id);
-  };
+  // const handleCancel = () => {
+  //   for (let i = 0; i < intervalRef.current.length; i++)
+  //     clearInterval(intervalRef.current[i]);
+  // };
+  // const handleInit = () => {
+  //   dispatch(getLastCoordinate(user.login));
+  //   let id = setInterval(() => {
+  //     dispatch(getLastCoordinate(user.login));
+  //   }, 2000);
+  //   intervalRef.current.push(id);
+  // };
 
   return (
     <div>
@@ -63,28 +55,34 @@ export default function DashBoard(props) {
         onViewportChange={viewport => setViewPort(viewport)}
         mapStyle="mapbox://styles/mapbox/streets-v11"
       >
-        <PolylineOverlay points={coordinates.points} />
+        {/* <PolylineOverlay points={coordinates.points} /> */}
         <Marker
-          latitude={coordinates.lastCoordinate[1]}
-          longitude={coordinates.lastCoordinate[0]}
+          latitude={-22.405683099999997}
+          longitude={-45.4404002}
           offsetLeft={-15}
           offsetTop={-10}
         >
-          <img
-            src="https://material-ui.com/static/images/avatar/1.jpg"
-            alt=""
-            width="30"
-            height="30"
-            style={{ borderRadius: 100 }}
-          />
+          <ButtonBase>
+            <img
+              src="https://material-ui.com/static/images/avatar/1.jpg"
+              alt=""
+              width="30"
+              height="30"
+              style={{ borderRadius: 100 }}
+            />
+          </ButtonBase>
         </Marker>
+        <GeolocateControl
+          positionOptions={{ enableHighAccuracy: true }}
+          trackUserLocation={true}
+        />
       </ReactMapGL>
-      <Menu
+      {/* <Menu
         getCoordinates={getCoordinates}
         handleLogout={handleLogout}
         handleCancel={handleCancel}
         handleInit={handleInit}
-      />
+      /> */}
     </div>
   );
 }

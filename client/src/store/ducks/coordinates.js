@@ -47,27 +47,28 @@ export function coordinatesReducer(state = initialState, action) {
 // Action Creators
 // get all records of coordinates in the date day/month/year,
 // and fill the lastcoordinate with the last coordinate of this date
-export function getCoordinates(day, month, year, login) {
+export function getCoordinates() {
   return function(dispatch) {
     // in getCoordinatesStarted erase the state
     dispatch(getCoordinatesStarted());
     axios
-      .get(`http://localhost:4000/coordenadas/${day}/${month}/${year}/${login}`)
+      .get(`http://localhost:4000/firespots`)
       .then(res => {
-        let newPoints = [];
-        const resCoordinates = res.data;
-        const lastCoordinate = [];
-        if (resCoordinates.length > 0) {
-          for (let i = 0; i < resCoordinates.length; i++) {
-            newPoints.push([
-              Number.parseFloat(resCoordinates[i].longitude),
-              Number.parseFloat(resCoordinates[i].latitude)
-            ]);
-          }
-          // last position becomes the last position of the date
-          lastCoordinate.push(newPoints[newPoints.length - 1]);
-          dispatch(getCoordinatesSuccess(newPoints, lastCoordinate[0]));
-        }
+        console.log(res.data);
+        // let newPoints = [];
+        // const resCoordinates = res.data;
+        // const lastCoordinate = [];
+        // if (resCoordinates.length > 0) {
+        //   for (let i = 0; i < resCoordinates.length; i++) {
+        //     newPoints.push([
+        //       Number.parseFloat(resCoordinates[i].longitude),
+        //       Number.parseFloat(resCoordinates[i].latitude)
+        //     ]);
+        //   }
+        //   // last position becomes the last position of the date
+        //   lastCoordinate.push(newPoints[newPoints.length - 1]);
+        //   dispatch(getCoordinatesSuccess(newPoints, lastCoordinate[0]));
+        // }
         // else {
         //   dispatch(getCoordinatesFailed());
         // }
