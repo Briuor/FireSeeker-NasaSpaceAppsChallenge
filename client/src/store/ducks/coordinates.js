@@ -4,8 +4,7 @@ import axios from "axios";
 export const Types = {
   GET_COORDINATES_STARTED: "coordinates/GET_COORDINATES_STARTED",
   GET_COORDINATES_SUCCESS: "coordinates/GET_COORDINATES_SUCCESS",
-  GET_COORDINATES_FAILED: "coordinates/GET_COORDINATES_FAILED",
-  GET_LAST_COORDINATES_SUCCESS: "coordinates/GET_LAST_COORDINATES_SUCCESS"
+  GET_COORDINATES_FAILED: "coordinates/GET_COORDINATES_FAILED"
 };
 
 // Reducer
@@ -48,7 +47,7 @@ export function getCoordinates() {
     // in getCoordinatesStarted erase the state
     dispatch(getCoordinatesStarted());
     axios
-      .get(`http://localhost:4000/firespots/Goiás`)
+      .get(`http://200.235.82.14:4000/firespots/Goiás`)
       .then(res => {
         console.log(res.data);
         let newPoints = [];
@@ -78,31 +77,6 @@ export function getCoordinates() {
   };
 }
 
-// get the last coordinate of the user and delete the route points
-export function getLastCoordinate(login, setViewPort = false) {
-  return function(dispatch) {
-    axios
-      .get(`http://localhost:4000/ultimacoordenada/${login}`)
-      .then(res => {
-        const lastCoordinate = [
-          Number.parseFloat(res.data[0].longitude),
-          Number.parseFloat(res.data[0].latitude)
-        ];
-        dispatch(getLastCoordinatesSuccess(lastCoordinate));
-        if (setViewPort) {
-          setViewPort(prevState => ({
-            ...prevState,
-            latitude: lastCoordinate[1],
-            longitude: lastCoordinate[0]
-          }));
-        }
-      })
-      .catch(error => {
-        // dispatch(getLastCoordinatesFailed());
-      });
-  };
-}
-
 const getCoordinatesStarted = () => ({
   type: Types.GET_COORDINATES_STARTED
 });
@@ -111,12 +85,5 @@ const getCoordinatesSuccess = points => ({
   type: Types.GET_COORDINATES_SUCCESS,
   payload: {
     points
-  }
-});
-
-const getLastCoordinatesSuccess = lastCoordinate => ({
-  type: Types.GET_LAST_COORDINATES_SUCCESS,
-  payload: {
-    lastCoordinate
   }
 });
