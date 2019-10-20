@@ -1,10 +1,11 @@
+import credencials
 import requests
 import string
 import json
 import csv
 
 spots = []
-maps_api_key = 'AIzaSyBpvYF2XxF3UcBxSdgGrTqcy8TnoctbSS0'
+maps_api_key = credencials.maps_api_key()
 
 with open('MODIS_C6_South_America_24h.csv') as csvfile:
     readCSV = csv.reader(csvfile, delimiter=',')
