@@ -12,7 +12,7 @@ app.use(express.json())
 app.use(cors())
 app.use('/', router);
 
-//Operações do Banco de Dados:
+//Database Operations:
 function execSQLQuery(sqlQry, res) {
     const connection = mysql.createConnection({
         host: 'localhost',
@@ -54,16 +54,47 @@ router.get('/firespots/', (req, res) => { //Get firespots by state
     execSQLQuery('SELECT * FROM fire_spots');
 })
 
+router.post('/emailbyid/:id?', (req, res) => { //Get email by id
+    let filter = ''
+    if(req.body.id) filter = `WHERE id = '${req.body.id}'`
+    execSQLQuery('SELECT email FROM users ' + filter, res);
+})
+
+router.post('/useridbystate/:state?', (req, res) => { //Get user id by state
+    let filter = ''
+    if(req.body.state) filter = `WHERE state like '%${req.body.state}' and is_entity = 0`
+    execSQLQuery('SELECT id FROM users ' + filter, res);
+})
+
+router.post('/lastrequestidbystate/:state?', (req, res) => { //Get last request id by state
+    let filter = ''
+    if(req.body.state) filter = `WHERE state like '%${req.body.state}'`
+    execSQLQuery('SELECT id FROM requests ' + filter + ' order by id desc limit 1', res);
+})
+
+router.post('/addrequesttouser/', (req, res) => { //Add a request to an user
+    const user = req.body.user_id
+    const request = req.body.request_id
+    execSQLQuery(`INSERT INTO user_requests(user_id,request_id) VALUES ('${user}','${request}')`, res);
+})
+
 router.post('/addrequest', (req, res) => { //Add a new request
     const description = req.body.description
     const atuation = req.body.atuation
     const state = req.body.state
     const qnt = req.body.nro_needed
     execSQLQuery(`INSERT INTO requests(description,atuation,state,nro_needed) VALUES ('${description}','${atuation}','${state}','${qnt}')`,res);
-});
-
-router.post('/addrequest', (req, res) => { //Add a new request
-    
+    let _state = ''
+    for (var i = 0; i < state.lenth; i++) {
+        if (state.charAt(i) == ' ') _state += '_'
+        else _state += state.charAt(i)
+    }
+    console.log(state)
+    const pythonProcess = spawn('python',["send_mail.py", _state]);
+    pythonProcess.stdout.on('data', function(data) {
+        let msg = data.toString()
+        console.log(msg)
+    });
 });
 
 router.post('/addcoordinates', (req, res) => { //Populate database with Fire Spots
@@ -109,7 +140,7 @@ router.post('/autenticate', (req,res) => { //Autenticates an user
     const email = req.body.email
     const password = req.body.password
     let password_hash = md5(password)
-    const sqlQry = `SELECT password,is_entity,state FROM users WHERE email = '${email}'`
+    const sqlQry = `SELECT password,is_entity,state,id FROM users WHERE email = '${email}'`
 
     const connection = mysql.createConnection({
         host: 'localhost',
@@ -128,7 +159,7 @@ router.post('/autenticate', (req,res) => { //Autenticates an user
           }
           else { //User exists
             if (results[0].password === password_hash) { //Right password
-              res.json({"valid":true,"is_entity":results[0].is_entity,"state":results[0].state,"id":results[0]})
+              res.json({"valid":true,"is_entity":results[0].is_entity,"state":results[0].state,"id":results[0].id})
             } else { //Wrong password
                 res.json({"valid":false,"error":"Wrong password"})
             }
