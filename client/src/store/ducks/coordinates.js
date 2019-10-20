@@ -11,7 +11,6 @@ export const Types = {
 // Reducer
 const initialState = {
   intervalRef: 0,
-  lastCoordinate: [0, 0],
   points: [],
   loading: false
 };
@@ -21,7 +20,6 @@ export function coordinatesReducer(state = initialState, action) {
     case Types.GET_COORDINATES_STARTED:
       return {
         ...state,
-        lastCoordinate: [0, 0],
         points: [],
         loading: true
       };
@@ -29,13 +27,11 @@ export function coordinatesReducer(state = initialState, action) {
       return {
         ...state,
         points: action.payload.points,
-        lastCoordinate: action.payload.lastCoordinate,
         loading: false
       };
     case Types.GET_LAST_COORDINATES_SUCCESS:
       return {
         ...state,
-        lastCoordinate: action.payload.lastCoordinate,
         points: [],
         loading: false
       };
@@ -52,26 +48,29 @@ export function getCoordinates() {
     // in getCoordinatesStarted erase the state
     dispatch(getCoordinatesStarted());
     axios
-      .get(`http://localhost:4000/firespots`)
+      .get(`http://localhost:4000/firespots/Goiás`)
       .then(res => {
         console.log(res.data);
-        // let newPoints = [];
-        // const resCoordinates = res.data;
-        // const lastCoordinate = [];
-        // if (resCoordinates.length > 0) {
-        //   for (let i = 0; i < resCoordinates.length; i++) {
-        //     newPoints.push([
-        //       Number.parseFloat(resCoordinates[i].longitude),
-        //       Number.parseFloat(resCoordinates[i].latitude)
-        //     ]);
-        //   }
-        //   // last position becomes the last position of the date
-        //   lastCoordinate.push(newPoints[newPoints.length - 1]);
-        //   dispatch(getCoordinatesSuccess(newPoints, lastCoordinate[0]));
-        // }
-        // else {
-        //   dispatch(getCoordinatesFailed());
-        // }
+        let newPoints = [];
+        const resCoordinates = res.data;
+        const lastCoordinate = [];
+        if (resCoordinates.length > 0) {
+          for (let i = 0; i < resCoordinates.length; i++) {
+            console.log(
+              resCoordinates[i].longitude,
+              resCoordinates[i].latitude
+            );
+            newPoints.push([
+              Number.parseFloat(resCoordinates[i].longitude),
+              Number.parseFloat(resCoordinates[i].latitude)
+            ]);
+          }
+          // last position becomes the last position of the date
+          lastCoordinate.push(newPoints[newPoints.length - 1]);
+          dispatch(getCoordinatesSuccess(newPoints));
+        } else {
+          // dispatch(getCoordinatesFailed());
+        }
       })
       .catch(error => {
         // dispatch(getCoordinatesFailed());
@@ -108,11 +107,10 @@ const getCoordinatesStarted = () => ({
   type: Types.GET_COORDINATES_STARTED
 });
 
-const getCoordinatesSuccess = (points, lastCoordinate) => ({
+const getCoordinatesSuccess = points => ({
   type: Types.GET_COORDINATES_SUCCESS,
   payload: {
-    points,
-    lastCoordinate
+    points
   }
 });
 

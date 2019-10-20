@@ -56,22 +56,27 @@ export default function DashBoard(props) {
         mapStyle="mapbox://styles/mapbox/streets-v11"
       >
         {/* <PolylineOverlay points={coordinates.points} /> */}
-        <Marker
-          latitude={-22.405683099999997}
-          longitude={-45.4404002}
-          offsetLeft={-15}
-          offsetTop={-10}
-        >
-          <ButtonBase>
-            <img
-              src="https://material-ui.com/static/images/avatar/1.jpg"
-              alt=""
-              width="30"
-              height="30"
-              style={{ borderRadius: 100 }}
-            />
-          </ButtonBase>
-        </Marker>
+        {coordinates.points.map(point => {
+          return (
+            <Marker
+              latitude={point[1]}
+              longitude={point[0]}
+              offsetLeft={-15}
+              offsetTop={-10}
+            >
+              <ButtonBase>
+                <img
+                  src="https://material-ui.com/static/images/avatar/1.jpg"
+                  alt=""
+                  width="30"
+                  height="30"
+                  style={{ borderRadius: 100 }}
+                />
+              </ButtonBase>
+            </Marker>
+          );
+        })}
+
         <GeolocateControl
           positionOptions={{ enableHighAccuracy: true }}
           trackUserLocation={true}
