@@ -119,31 +119,31 @@ router.post('/addcoordinates', (req, res) => { //Populate database with Fire Spo
 });
 
 router.post('/autenticate', (req,res) => { //Autenticates an user
-    const login = req.body.login
+    const email = req.body.email
     const password = req.body.password
     let password_hash = md5(password)
-    const sqlQry = `SELECT password,name FROM users WHERE login = '${login}'`
+    const sqlQry = `SELECT password FROM users WHERE email = '${email}'`
 
     const connection = mysql.createConnection({
         host: 'localhost',
         port: 3306,
         user: 'root',
         password: '',
-        database: 'rastreador'
+        database: 'fireseeker'
     });
    
     connection.query(sqlQry, function(error, results, fields) {
-        if(error) //Erro na consulta
+        if(error) //Query error
             res.json({"valid":false,"error":error})
         else {
           if (results[0] == undefined || results[0] === undefined) { //User don't exist
-            res.json({"valid":false,"error":"Usuário não existe"})
+            res.json({"valid":false,"error":"User don't exist"})
           }
           else { //User exists
             if (results[0].password === password_hash) { //Right password
               res.json({"valid":true,"name":results[0].name})
             } else { //Wrong password
-                res.json({"valid":false,"error":"Senha incorreta"})
+                res.json({"valid":false,"error":"Wrong password"})
             }
           } 
         }
