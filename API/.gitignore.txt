@@ -1,2 +1,2 @@
-node_modules/
-credencials.py
+/node_modules
+.credencials.py

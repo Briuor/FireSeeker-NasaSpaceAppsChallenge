@@ -1,2 +1,2 @@
-credencials.py
-_pycache_/
+.credencials.py
+/_pycache_
