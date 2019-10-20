@@ -122,7 +122,7 @@ router.post('/autenticate', (req,res) => { //Autenticates an user
     const email = req.body.email
     const password = req.body.password
     let password_hash = md5(password)
-    const sqlQry = `SELECT password FROM users WHERE email = '${email}'`
+    const sqlQry = `SELECT password,is_entity FROM users WHERE email = '${email}'`
 
     const connection = mysql.createConnection({
         host: 'localhost',
@@ -141,7 +141,7 @@ router.post('/autenticate', (req,res) => { //Autenticates an user
           }
           else { //User exists
             if (results[0].password === password_hash) { //Right password
-              res.json({"valid":true,"name":results[0].name})
+              res.json({"valid":true,"is_entity":results[0].is_entity})
             } else { //Wrong password
                 res.json({"valid":false,"error":"Wrong password"})
             }
