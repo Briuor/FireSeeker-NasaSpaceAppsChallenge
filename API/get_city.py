@@ -33,4 +33,4 @@ for char in city:
     if char != "'":
     	_city += char
 city = _city
-print(city)
+print(city, end='')

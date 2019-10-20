@@ -58,19 +58,37 @@ router.post('/adduser', (req, res) => { //Add a new user
     const name = req.body.name
     const email = req.body.email
     const password = md5(req.body.password)
-
-    const pythonProcess = spawn('python',["send_mail.py", login, email]);
-
-
-
-
-
-
-
-
-
-
-    execSQLQuery(`INSERT INTO users(name, login, password, email) VALUES('${name}','${login}','${password}','${email}')`, res);
+    const lat = req.body.latitude
+    const lon = req.body.longitude
+    const ie = req.body.is_entity
+    const org = req.body.organization
+    const cc = req.body.company_code
+    const at = req.body.atuation
+    const cityPythonProcess = spawn('python',["get_city.py", lat, lon]);
+    const statePythonProcess = spawn('python',["get_state.py", lat, lon, email]);
+    let that = this;
+    let city = ''
+    cityPythonProcess.stdout.on('data', function(data) {
+        that.city = data.toString()
+        console.log(data.toString())
+        execSQLQuery(`INSERT INTO users(name, email, password, city, is_entity, organization, company_code, atuation, latitude, longitude) VALUES('${name}','${email}','${password}','${that.city}','${ie}','${org}','${cc}','${at}','${lat}','${lon}')`, res);
+    });
+    statePythonProcess.stdout.on('data', function(data) {
+        let str = data.toString()
+        let state = ''
+        let em = ''
+        for (var i = 0; i < str.length; i++) {
+            if (str.charAt(i) != '|') {
+                state += str.charAt(i)
+            } else {
+                for (var j = i+1; j < str.length; j++) em += str.charAt(j)
+                break
+            }
+          }
+        console.log(state)
+        console.log(em)
+        execSQLQuery(`UPDATE users SET state = '${state}' WHERE email = '${em}'`, res); 
+    });
 });
 
 router.post('/addcoordinates', (req, res) => { //Populate database with Fire Spots
