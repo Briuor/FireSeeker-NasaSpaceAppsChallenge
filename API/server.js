@@ -1,12 +1,15 @@
 const express = require('express')
 const mysql = require('mysql')
 const md5 = require('md5')
+const cors = require('cors')
+const spawn = require('child_process').spawn
 
 const app = express();         
 const port = 4000;
 
 const router = express.Router();
 app.use(express.json())
+app.use(cors())
 app.use('/', router);
 
 //Operações do Banco de Dados:
@@ -53,9 +56,20 @@ router.get('/firespots/', (req, res) => { //Get firespots by state
 
 router.post('/adduser', (req, res) => { //Add a new user
     const name = req.body.name
-    const login = req.body.login
     const email = req.body.email
     const password = md5(req.body.password)
+
+    const pythonProcess = spawn('python',["send_mail.py", login, email]);
+
+
+
+
+
+
+
+
+
+
     execSQLQuery(`INSERT INTO users(name, login, password, email) VALUES('${name}','${login}','${password}','${email}')`, res);
 });
 
