@@ -78,6 +78,17 @@ router.post('/addrequesttouser/', (req, res) => { //Add a request to an user
     execSQLQuery(`INSERT INTO user_requests(user_id,request_id) VALUES ('${user}','${request}')`, res);
 })
 
+router.get('/userrequests/:id?', (req, res) => { //Get requests by user id
+    let id = req.params.id
+    execSQLQuery(`SELECT * FROM user_requests where user_id = '${id}'`, res);
+})
+
+router.post('/updatestatus', (req, res) => { //Update the status of a request
+    const user = req.body.user_id
+    const request = req.body.request_id
+    execSQLQuery(`UPDATE user_requests SET status = 1 WHERE user_id = '${user}' and request_id = '${request}'`, res);
+})
+
 router.post('/addrequest', (req, res) => { //Add a new request
     const description = req.body.description
     const atuation = req.body.atuation
@@ -89,11 +100,11 @@ router.post('/addrequest', (req, res) => { //Add a new request
         if (state.charAt(i) == ' ') _state += '_'
         else _state += state.charAt(i)
     }
-    console.log(state)
+    //console.log(state)
     const pythonProcess = spawn('python',["send_mail.py", _state]);
     pythonProcess.stdout.on('data', function(data) {
         let msg = data.toString()
-        console.log(msg)
+        //console.log(msg)
     });
 });
 
