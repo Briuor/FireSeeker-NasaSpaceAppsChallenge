@@ -1,6 +1,6 @@
 # FireSeeker Project - NASA Internacional Space Apps
 
-##How it Works?
+###How it Works?
 
 If I ask now, how many fire outbreaks have you had in your country in the last 24 hours, would you know how to answer? According to IBGE (Brazilian Institute of Geography and Statistics), here in Brazil we have more than 1600, like in Amazon forest, how you may have heard. In a case like this, would you know how to help?
 
