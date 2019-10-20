@@ -35,9 +35,9 @@ router.get('/users', (req, res) => { //All users query
     execSQLQuery('SELECT * FROM users', res);
 })
 
-router.get('/users/:login?', (req, res) => { //Get user info by login
+router.get('/users/:email?', (req, res) => { //Get user info by email
     let filter = ''
-    if(req.params.login) filter = `WHERE login = '${req.params.login}'`
+    if(req.params.email) filter = `WHERE email = '${req.params.email}'`
     execSQLQuery('SELECT * FROM users ' + filter, res);
 })
 

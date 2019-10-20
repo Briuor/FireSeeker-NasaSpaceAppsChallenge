@@ -20,7 +20,7 @@ with open('MODIS_C6_South_America_24h.csv') as csvfile:
             if l == 1:
                 city = 'Unknown'
                 uf = 'Unknown'
-            if l == 5:
+            elif l == 5:
                 city = data['results'][0]['address_components'][1]['long_name']
                 uf = data['results'][0]['address_components'][2]['long_name']
             elif l == 4 or l == 3:
@@ -32,9 +32,6 @@ with open('MODIS_C6_South_America_24h.csv') as csvfile:
                         city = data['results'][0]['address_components'][1]['long_name']
                         uf = data['results'][0]['address_components'][2]['long_name']
                         break
-            elif l == 3:
-                city = 'Unknown'
-                uf = 'Unknown'
             elif l == 6:
                 city = data['results'][0]['address_components'][2]['long_name']
                 uf = data['results'][0]['address_components'][3]['long_name']
