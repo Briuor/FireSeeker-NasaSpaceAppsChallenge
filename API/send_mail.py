@@ -32,6 +32,8 @@ for char in sys.argv[1]:
 user_ids = []
 request_ids = []
 
+
+
 res = requests.post('http://localhost:4000/useridbystate', json={'state':st})
 data = res.json()
 for _id in data:

@@ -54,19 +54,19 @@ router.get('/firespots/', (req, res) => { //Get firespots by state
     execSQLQuery('SELECT * FROM fire_spots');
 })
 
-router.post('/emailbyid/:id?', (req, res) => { //Get email by id
+router.post('/emailbyid/', (req, res) => { //Get email by id
     let filter = ''
     if(req.body.id) filter = `WHERE id = '${req.body.id}'`
     execSQLQuery('SELECT email FROM users ' + filter, res);
 })
 
-router.post('/useridbystate/:state?', (req, res) => { //Get user id by state
+router.post('/useridbystate/', (req, res) => { //Get user id by state
     let filter = ''
     if(req.body.state) filter = `WHERE state like '%${req.body.state}' and is_entity = 0`
     execSQLQuery('SELECT id FROM users ' + filter, res);
 })
 
-router.post('/lastrequestidbystate/:state?', (req, res) => { //Get last request id by state
+router.post('/lastrequestidbystate/', (req, res) => { //Get last request id by state
     let filter = ''
     if(req.body.state) filter = `WHERE state like '%${req.body.state}'`
     execSQLQuery('SELECT id FROM requests ' + filter + ' order by id desc limit 1', res);
