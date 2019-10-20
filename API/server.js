@@ -35,10 +35,6 @@ router.get('/users', (req, res) => { //All users query
     execSQLQuery('SELECT * FROM users', res);
 })
 
-router.get('/fire_spots', (req, res) => { //All fire spots query
-    execSQLQuery('SELECT * FROM coordenadas', res);
-})
-
 router.get('/users/:login?', (req, res) => { //Get user info by login
     let filter = ''
     if(req.params.login) filter = `WHERE login = '${req.params.login}'`
@@ -47,7 +43,7 @@ router.get('/users/:login?', (req, res) => { //Get user info by login
 
 router.get('/firespots/:state?', (req, res) => { //Get firespots by state
     let filter = ''
-    if(req.params.state) filter = `WHERE state = '${req.params.state}'`
+    if(req.params.state) filter = `WHERE state like '%${req.params.state}'`
     execSQLQuery('SELECT * FROM fire_spots ' + filter, res);
 })
 
