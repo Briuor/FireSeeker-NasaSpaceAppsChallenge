@@ -8,7 +8,7 @@ Members:
 - [Misael Cézar](https://github.com/MisaelCzar)
 - [Ana Clara Ribeiro]()
 
-![alt text](https://github.com/Briuor/FireSeeker-NasaSpaceAppsChallenge/blob/master/screenshots/dashboard.png)
+![alt text](https://github.com/Briuor/FireSeeker-NasaSpaceAppsChallenge/blob/master/screenshots/map.png)
 
 ### How it Works?
 
