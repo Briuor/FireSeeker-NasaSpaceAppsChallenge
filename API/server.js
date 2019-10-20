@@ -78,9 +78,9 @@ router.post('/addrequesttouser/', (req, res) => { //Add a request to an user
     execSQLQuery(`INSERT INTO user_requests(user_id,request_id) VALUES ('${user}','${request}')`, res);
 })
 
-router.get('/userrequests/:id?', (req, res) => { //Get requests by user id
+router.get('/userrequests/:id?', (req, res) => { //Get requests info by user id
     let id = req.params.id
-    execSQLQuery(`SELECT * FROM user_requests where user_id = '${id}'`, res);
+    execSQLQuery(`SELECT r.description, r.id FROM requests r, user_requests s WHERE s.user_id = '${id}' AND s.request_id = r.id`, res);
 })
 
 router.post('/updatestatus', (req, res) => { //Update the status of a request
