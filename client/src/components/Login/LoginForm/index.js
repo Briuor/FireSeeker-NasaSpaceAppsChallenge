@@ -13,7 +13,7 @@ export default function LoginForm({
 
   return (
     <Grid item xs={12}>
-      <Grid item xs={12}>
+      <Grid item xs={5}>
         <TextField
           id="login"
           label="Usuário"
@@ -37,7 +37,7 @@ export default function LoginForm({
           variant="contained"
           color="primary"
           className={classes.button}
-          style={{ backgroundColor: "#59a8b5" }}
+          style={{ backgroundColor: "#D83556" }}
           onClick={submitLogin}
         >
           Entrar
@@ -48,6 +48,7 @@ export default function LoginForm({
           variant="contained"
           color="default"
           className={classes.button}
+          
           onClick={handleChangeForm}
         >
           Registrar-se
