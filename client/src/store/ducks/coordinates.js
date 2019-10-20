@@ -42,12 +42,12 @@ export function coordinatesReducer(state = initialState, action) {
 // Action Creators
 // get all records of coordinates in the date day/month/year,
 // and fill the lastcoordinate with the last coordinate of this date
-export function getCoordinates() {
+export function getCoordinates(state) {
   return function(dispatch) {
     // in getCoordinatesStarted erase the state
     dispatch(getCoordinatesStarted());
     axios
-      .get(`http://200.235.82.14:4000/firespots/Goiás`)
+      .get(`http://200.235.82.14:4000/firespots/${state}`)
       .then(res => {
         console.log(res.data);
         let newPoints = [];

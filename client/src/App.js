@@ -4,7 +4,7 @@ import DashBoard from "./components/DashBoard";
 import Login from "./components/Login";
 import Menu from "./components/DashBoard/Menu";
 import { Provider } from "react-redux";
-import VolunteerModal from "./components/VolunteerModal";
+import Volunteer from "./components/Volunteer";
 import store from "./store";
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -38,7 +38,7 @@ function App() {
           <Route exact path="/" component={Login} />
           <Route exact path="/dashboard" component={DashBoard} />
           <Route exact path="/menu" component={Menu} />
-          <Route exact path="/volunteer" component={VolunteerModal} />
+          <Route exact path="/volunteer" component={Volunteer} />
         </Switch>
       </BrowserRouter>
     </Provider>

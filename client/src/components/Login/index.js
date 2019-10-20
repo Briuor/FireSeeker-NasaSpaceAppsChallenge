@@ -32,6 +32,13 @@ export default function Login(props) {
     dispatch(updateUser(newUser));
   };
 
+  const handleChangeUserSpecify = (latitude, longitude) => {
+    let newUser = user;
+    newUser.latitude = latitude;
+    newUser.longitude = longitude;
+    dispatch(updateUser(newUser));
+  };
+
   const handleChangeForm = () => {
     setLoginForm(!loginForm);
   };
@@ -43,29 +50,20 @@ export default function Login(props) {
   const handleAlertClose = () => {
     setShowAlertMessage(false);
   };
- 
+
   return (
     <div className={classes.wrapper}>
-      <Grid
-        container
-        direction="column"
-        
-        className={classes.mainContainer}
-      >
+      <Grid container direction="column" className={classes.mainContainer}>
         <Grid item md={12}>
           <Grid container direction="row">
             <Grid item md={3}>
-              {<img width="400"  alt="" src= {Logo} /> }
+              {<img width="400" alt="" src={Logo} />}
             </Grid>
-            <Grid item md={9}
-              
-            >
-              
-            </Grid>
+            <Grid item md={9}></Grid>
           </Grid>
         </Grid>
         {/* Login/Register Form */}
-        
+
         {loginForm ? (
           <LoginForm
             handleChangeForm={handleChangeForm}
@@ -78,6 +76,7 @@ export default function Login(props) {
             handleAlertOpen={handleAlertOpen}
             submitRegister={submitRegister}
             handleChangeUser={handleChangeUser}
+            handleChangeUserSpecify={handleChangeUserSpecify}
           />
         )}
       </Grid>
