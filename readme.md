@@ -1,5 +1,13 @@
 # FireSeeker Project - NASA Internacional Space Apps
 
+Members:
+
+- [Bruno Fernando Lopes](https://github.com/Briuor/)
+- [Érick de Oliveira Teixeira](https://github.com/ErickOliveiraT)
+- [Gabriel Mussolini](https://github.com/GabrielMussolini)
+- [Misael Cézar](https://github.com/MisaelCzar)
+- [Ana Clara Ribeiro]()
+
 ![alt text](https://github.com/Briuor/FireSeeker-NasaSpaceAppsChallenge/screenshots/dashboard.png)
 
 ### How it Works?
