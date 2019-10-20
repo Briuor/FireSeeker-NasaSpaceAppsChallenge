@@ -1,6 +1,7 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 // import Logo from "../../img/logo.png";
+import Logo from "../../img/logo.png";
 import Snackbar from "@material-ui/core/Snackbar";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
@@ -42,26 +43,29 @@ export default function Login(props) {
   const handleAlertClose = () => {
     setShowAlertMessage(false);
   };
-
+ 
   return (
     <div className={classes.wrapper}>
       <Grid
         container
         direction="column"
-        alignItems="center"
+        
         className={classes.mainContainer}
       >
         <Grid item md={12}>
           <Grid container direction="row">
             <Grid item md={3}>
-              {/* <img width="100" height="80" alt="" src={Logo} /> */}
+              {<img width="400"  alt="" src= {Logo} /> }
             </Grid>
-            <Grid item md={9}>
-              <h1 className={classes.formTitle}>Rastreador Mobile</h1>
+            <Grid item md={9}
+              
+            >
+              
             </Grid>
           </Grid>
         </Grid>
         {/* Login/Register Form */}
+        
         {loginForm ? (
           <LoginForm
             handleChangeForm={handleChangeForm}

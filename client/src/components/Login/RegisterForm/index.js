@@ -58,7 +58,7 @@ export default function RegisterForm({
           color="primary"
           className={classes.button}
           onClick={submitRegister}
-          style={{ backgroundColor: "#59a8b5" }}
+          style={{ backgroundColor: "#D83556" }}
         >
           Registrar-se
         </Button>

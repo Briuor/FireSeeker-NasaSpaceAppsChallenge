@@ -1,19 +1,28 @@
 import { makeStyles } from "@material-ui/core/styles";
-// import Background from "../../img/bg.jpg";
+import Background from "../../img/banner.png";
+import Logo from "../../img/logo.png";
 
 export const useStyles = makeStyles(theme => ({
+  body: {
+    margin: "0",
+    padding: "0"
+  },
   wrapper: {
     height: "100vh",
-    // background: `url(${Background}) no-repeat`,
+    background: `url(${Background}) no-repeat`,
     backgroundSize: "contain",
-    backgroundPosition: "left"
+    backgroundPosition: "right"
+    
   },
   mainContainer: {
-    paddingLeft: "36%",
+    paddingLeft: "10%",
     paddingTop: 80
   },
+  logo: {
+    background: `url(${Logo}) no-repeat`,  
+  },
   button: {
-    marginTop: 18,
+    marginTop: 5,
     width: 400
   },
   textField: {
