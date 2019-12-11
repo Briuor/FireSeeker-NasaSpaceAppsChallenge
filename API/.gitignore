@@ -1,0 +1,4 @@
+/node_modules
+.credencials.py
+package-lock.json
+yarn.lock
